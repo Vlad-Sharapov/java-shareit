@@ -2,12 +2,14 @@ package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -26,6 +28,9 @@ class ItemControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    User user1 = User.builder().name("user1").email("user1@mail.ru").build();
+    User user2 = User.builder().name("user2").email("user2@mail.ru").build();
+
     ItemDto item1 = ItemDto.builder().name("Дрель").description("Обычная дрель").available(true).build();
     ItemDto itemWithOutAvailable = ItemDto.builder().name("Дрель").description("Обычная дрель").build();
     ItemDto itemWithEmptyName = ItemDto.builder().name("Дрель").description("Обычная дрель").build();
@@ -38,6 +43,15 @@ class ItemControllerTest {
     ItemDto item3 = ItemDto.builder().name("Болгарка").description("Болгарка макита").available(true).build();
 
 
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        this.mockMvc.perform(post("/users")
+                .content(asJsonString(user1)).contentType("application/json")
+                .accept("*/*"));
+        this.mockMvc.perform(post("/users")
+                .content(asJsonString(user2)).contentType("application/json")
+                .accept("*/*"));
+    }
 
     @Test
     void shouldItemCreateWhenUsePostItems() throws Exception {
