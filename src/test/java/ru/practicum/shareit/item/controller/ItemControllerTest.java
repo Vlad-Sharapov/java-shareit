@@ -2,14 +2,12 @@ package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -28,9 +26,6 @@ class ItemControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    User user1 = User.builder().name("user1").email("user1@mail.ru").build();
-    User user2 = User.builder().name("user2").email("user2@mail.ru").build();
-
     ItemDto item1 = ItemDto.builder().name("Дрель").description("Обычная дрель").available(true).build();
     ItemDto itemWithOutAvailable = ItemDto.builder().name("Дрель").description("Обычная дрель").build();
     ItemDto itemWithEmptyName = ItemDto.builder().name("Дрель").description("Обычная дрель").build();
@@ -43,21 +38,12 @@ class ItemControllerTest {
     ItemDto item3 = ItemDto.builder().name("Болгарка").description("Болгарка макита").available(true).build();
 
 
-    @BeforeEach
-    public void beforeEach() throws Exception {
-        this.mockMvc.perform(post("/users")
-                .content(asJsonString(user1)).contentType("application/json")
-                .accept("*/*"));
-        this.mockMvc.perform(post("/users")
-                .content(asJsonString(user2)).contentType("application/json")
-                .accept("*/*"));
-    }
 
     @Test
     void shouldItemCreateWhenUsePostItems() throws Exception {
         this.mockMvc.perform(post("/items")
                         .content(asJsonString(item1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -113,7 +99,7 @@ class ItemControllerTest {
     void shouldItemUpdateWhenUsePatchItems() throws Exception {
         this.mockMvc.perform(patch("/items/{itemId}", 1)
                         .content(asJsonString(updateItem1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk());
     }
@@ -130,7 +116,7 @@ class ItemControllerTest {
     void shouldItemUpdateStatus400WhenUsePatchItemsWithOtherUser() throws Exception {
         this.mockMvc.perform(patch("/items/{itemId}", 1)
                         .content(asJsonString(updateItem1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 3L)
+                        .header("X-Sharer-User-Id", 2L)
                         .accept("*/*"))
                 .andExpect(status().isNotFound());
     }
@@ -139,7 +125,7 @@ class ItemControllerTest {
     void shouldItemUpdateAvailableWhenUsePatchItems() throws Exception {
         this.mockMvc.perform(patch("/items/{itemId}", 1)
                         .content(asJsonString(updateAvailableForItem1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.available").value(true));
@@ -149,7 +135,7 @@ class ItemControllerTest {
     void shouldItemUpdateNameWhenUsePatchItems() throws Exception {
         this.mockMvc.perform(patch("/items/{itemId}", 1)
                         .content(asJsonString(updateNameForItem1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Аккумуляторная дрель"));
@@ -160,7 +146,7 @@ class ItemControllerTest {
     void shouldItemUpdateDescriptionWhenUsePatchItems() throws Exception {
         this.mockMvc.perform(patch("/items/{itemId}", 1)
                         .content(asJsonString(updateDescForItem1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("Аккумуляторная дрель + аккумулятор"));
@@ -170,7 +156,7 @@ class ItemControllerTest {
     void shouldGetItemWhenUseGetItemsWithParameterItemId() throws Exception {
         this.mockMvc.perform(get("/items/{itemId}", 1)
                         .content(asJsonString(item1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1));
@@ -180,14 +166,14 @@ class ItemControllerTest {
     void shouldGetAllItemsForUserWhenUseGetItems() throws Exception {
         this.mockMvc.perform(post("/items")
                         .content(asJsonString(item2)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk());
 
 
         String contentAsString = this.mockMvc.perform(get("/items", 1)
                         .content(asJsonString(item1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header("X-Sharer-User-Id", 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -207,7 +193,7 @@ class ItemControllerTest {
 
         this.mockMvc.perform(post("/items")
                 .content(asJsonString(item3)).contentType("application/json")
-                .header("X-Sharer-User-Id", 3L)
+                .header("X-Sharer-User-Id", 2L)
                 .accept("*/*"));
 
         String contentAsString = this.mockMvc.perform(get("/items/search")

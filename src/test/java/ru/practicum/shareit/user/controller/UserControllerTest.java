@@ -29,6 +29,7 @@ class UserControllerTest {
     private ObjectMapper objectMapper;
 
     User user1 = User.builder().name("user1").email("newuser1@mail.ru").build();
+    User user2 = User.builder().name("user2").email("newuser2@mail.ru").build();
     User user1EmptyEmail = User.builder().name("user1").build();
     User user1FailEmail = User.builder().name("user1").email("newuser1mailru").build();
     User user1EmptyName = User.builder().email("newuser1@mail.ru").build();
@@ -169,7 +170,10 @@ class UserControllerTest {
 
     @Test
     void deleteUser() throws Exception {
-        this.mockMvc.perform(delete("/users/{userId}", 1)
+        this.mockMvc.perform(post("/users")
+                .content(asJsonString(user2)).contentType("application/json")
+                .accept("*/*"));
+        this.mockMvc.perform(delete("/users/{userId}", 3)
                         .accept("*/*"))
                 .andExpect(status().isOk());
         String contentAsString = this.mockMvc.perform(get("/users")
@@ -183,7 +187,7 @@ class UserControllerTest {
                 new TypeReference<>() {
                 });
 
-        assertEquals(userDtos.size(), 1);
+        assertEquals(userDtos.size(), 2);
     }
 
     public static String asJsonString(final Object obj) {
