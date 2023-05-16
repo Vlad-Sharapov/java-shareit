@@ -33,12 +33,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
-        userRepository.get(userId);
+    public ItemDto updateItem(Long ownerId, Long itemId, ItemDto itemDto) {
+        userRepository.get(ownerId);
         Item item = toItem(itemDto);
         item.setId(itemId);
-        item.setOwner(userId);
-        return toItemDto(itemRepository.update(item));
+        item.setOwner(ownerId);
+        return toItemDto(itemRepository.update(ownerId, item));
     }
 
     @Override

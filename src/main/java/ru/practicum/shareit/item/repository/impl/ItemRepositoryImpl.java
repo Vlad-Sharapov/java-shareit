@@ -29,11 +29,10 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item update(Item item) {
+    public Item update(Long ownerId, Item item) {
         Long id = item.getId();
-        Long ownerId = item.getOwner();
-        get(ownerId, id);
         Item savedItem = items.get(id);
+        checkItemOwner(savedItem, ownerId);
         if (item.getName() != null) {
             savedItem.setName(item.getName());
         }
@@ -56,11 +55,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item get(Long userId, Long itemId) {
         checkItemExist(itemId);
-        Item item = items.get(itemId);
-        if (item.getOwner().equals(userId)) {
-            return item;
-        }
-        throw new ObjectNotFoundException(String.format("The item was not found in the user %s", userId));
+        return items.get(itemId);
     }
 
     @Override
@@ -74,4 +69,9 @@ public class ItemRepositoryImpl implements ItemRepository {
         }
     }
 
+    private void checkItemOwner(Item item, Long ownerId) {
+        if (!item.getOwner().equals(ownerId)) {
+        throw new ObjectNotFoundException(String.format("The item was not found in the user %s", ownerId));
+        }
+    }
 }
