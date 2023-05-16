@@ -20,6 +20,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     private final GeneratorId generatorId;
     private final Map<Long, Item> items = new HashMap<>();
+
     @Override
     public Item add(Item item) {
         item.setId(generatorId.incrementId());
