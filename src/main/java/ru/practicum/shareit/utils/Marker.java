@@ -1,4 +1,4 @@
-package ru.practicum.shareit.auxilary;
+package ru.practicum.shareit.utils;
 
 public interface Marker {
 

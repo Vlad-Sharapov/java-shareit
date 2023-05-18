@@ -44,8 +44,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllItemsUser(Long userId) {
         userRepository.get(userId);
-        List<Item> allItemsUser = itemRepository.getAllFromUser(userId);
-        return allItemsUser.stream()
+        return itemRepository.getAllFromUser(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -58,17 +57,17 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(String text) {
-        if (!text.isBlank()) {
-            String lowerText = text.toLowerCase();
-            List<Item> items = itemRepository.getAll();
-            return items.stream()
-                    .filter(item -> item.getName().toLowerCase().contains(lowerText) ||
-                            item.getDescription().toLowerCase().contains(lowerText))
-                    .filter(item -> item.getAvailable().equals(true))
-                    .map(ItemMapper::toItemDto)
-                    .collect(Collectors.toList());
+        if (text.isBlank()) {
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
+        String lowerText = text.toLowerCase();
+        List<Item> items = itemRepository.getAll();
+        return items.stream()
+                .filter(item -> item.getName().toLowerCase().contains(lowerText) ||
+                        item.getDescription().toLowerCase().contains(lowerText))
+                .filter(item -> item.getAvailable().equals(true))
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
 

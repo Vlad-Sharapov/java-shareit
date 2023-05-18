@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.auxilary.GeneratorId;
+import ru.practicum.shareit.utils.GeneratorId;
 import ru.practicum.shareit.exception.ObjectExistenceException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.user.model.User;
@@ -68,8 +68,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private void checkEmailExist(User user) {
-        if (users.values().stream().anyMatch(saveUser -> saveUser.getEmail().equals(user.getEmail())
-                && !saveUser.getId().equals(user.getId()))) {
+        boolean findEmail = users.values().stream()
+                .anyMatch(saveUser -> saveUser.getEmail().equals(user.getEmail())
+                        && !saveUser.getId().equals(user.getId()));
+        if (findEmail) {
             throw new ObjectExistenceException("Email already exist");
         }
     }

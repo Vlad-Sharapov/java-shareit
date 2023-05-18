@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.auxilary.GeneratorId;
+import ru.practicum.shareit.utils.GeneratorId;
 import ru.practicum.shareit.exception.ObjectExistenceException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.model.Item;
