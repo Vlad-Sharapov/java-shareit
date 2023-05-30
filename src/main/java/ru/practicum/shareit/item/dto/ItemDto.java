@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.utils.Marker;
 
@@ -12,7 +11,6 @@ import javax.validation.constraints.NotNull;
  */
 
 @Data
-@Builder(toBuilder = true)
 public class ItemDto {
 
     private Long id;

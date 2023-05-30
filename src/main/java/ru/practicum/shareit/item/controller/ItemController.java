@@ -24,15 +24,14 @@ public class ItemController {
     @PostMapping
     public ItemDto add(@RequestHeader(USER_ID_HEADER) Long userId,
                        @Validated({Marker.OnCreate.class}) @RequestBody ItemDto itemDto) {
-        return itemService.addNewItem(userId, itemDto);
+        return itemService.saveItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestHeader(USER_ID_HEADER) long userId,
                           @Validated({Marker.OnUpdate.class}) @PathVariable Long itemId,
                           @RequestBody ItemDto itemDto) {
-
-        return itemService.updateItem(userId, itemId, itemDto);
+        return itemService.updateItem(userId,itemId, itemDto);
 
     }
 
