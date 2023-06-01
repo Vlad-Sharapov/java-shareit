@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 class UserControllerTest {
 
@@ -57,7 +59,7 @@ class UserControllerTest {
         this.mockMvc.perform(post("/users")
                         .content(asJsonString(user1)).contentType("application/json")
                         .accept("*/*"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -141,7 +143,7 @@ class UserControllerTest {
         this.mockMvc.perform(patch("/users/{userId}", 1)
                         .content(asJsonString(userUpdateEmailExist)).contentType("application/json")
                         .accept("*/*"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isConflict());
 
     }
 
@@ -173,7 +175,7 @@ class UserControllerTest {
         this.mockMvc.perform(post("/users")
                 .content(asJsonString(user2)).contentType("application/json")
                 .accept("*/*"));
-        this.mockMvc.perform(delete("/users/{userId}", 3)
+        this.mockMvc.perform(delete("/users/{userId}", 2)
                         .accept("*/*"))
                 .andExpect(status().isOk());
         String contentAsString = this.mockMvc.perform(get("/users")

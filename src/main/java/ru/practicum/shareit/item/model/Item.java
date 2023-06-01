@@ -12,17 +12,23 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "items")
+@Table(name = "items", schema = "public")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
     private Boolean available;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner")
+    @JoinColumn(name = "owner", nullable = false)
     private User owner;
 
     @OneToOne
