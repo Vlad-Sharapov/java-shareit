@@ -12,7 +12,7 @@ public interface BookingService {
 
     BookingDtoOutput approved(Long userId, Long bookingId, Boolean approved);
 
-    BookingDtoOutput get(Long userId, Long BookingId);
+    BookingDtoOutput get(Long userId, Long bookingId);
 
     List<BookingDtoOutput> getAllFromUser(Long userId, String status);
 

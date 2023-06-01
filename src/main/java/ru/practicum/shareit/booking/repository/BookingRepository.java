@@ -35,7 +35,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByItem_Id(Long itemId);
 
 
-    Optional<Booking> findTopByStatusNotLikeAndBookerIdAndItemId(BookingStatus status, Long booker_id, Long item_id, Sort sort);
+    Optional<Booking> findTopByStatusNotLikeAndBookerIdAndItemId(BookingStatus status, Long bookerId, Long itemId, Sort sort);
 
 
 }
