@@ -15,7 +15,7 @@ public class BookingMapper {
 
         LocalDateTime endDate = bookingDto.getEnd();
         LocalDateTime startDate = bookingDto.getStart();
-        ZoneId zoneId = ZoneId.of("UTC+3");
+        ZoneId zoneId = ZoneId.of("UTC+6");
         ZonedDateTime zonedStartDate = startDate.atZone(zoneId);
         ZonedDateTime zonedEndDate = endDate.atZone(zoneId);
 
@@ -29,8 +29,8 @@ public class BookingMapper {
 
     public static BookingDto toBookingDto(Booking booking) {
 
-        LocalDateTime start = LocalDateTime.ofInstant(booking.getStart(), ZoneId.of("UTC+3"));
-        LocalDateTime end = LocalDateTime.ofInstant(booking.getEnd(), ZoneId.of("UTC+3"));
+        LocalDateTime start = LocalDateTime.ofInstant(booking.getStart(), ZoneId.of("UTC+6"));
+        LocalDateTime end = LocalDateTime.ofInstant(booking.getEnd(), ZoneId.of("UTC+6"));
 
         return BookingDto.builder()
                 .id(booking.getId())
