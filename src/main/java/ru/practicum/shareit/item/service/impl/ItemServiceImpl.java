@@ -19,7 +19,7 @@ import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -88,10 +88,10 @@ public class ItemServiceImpl implements ItemService {
                             .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED))
                             .collect(Collectors.toList());
                     Booking nextBooking = bookings.stream()
-                            .filter(booking -> booking.getStart().isAfter(Instant.now()))
+                            .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                             .min(Comparator.comparing(Booking::getStart)).orElse(null);
                     Booking lastBooking = bookings.stream()
-                            .filter(booking -> booking.getStart().isBefore(Instant.now()))
+                            .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
                             .max(Comparator.comparing(Booking::getStart)).orElse(null);
                     return ItemMapper.toItemDtoByOwner(item, lastBooking, nextBooking, comments);
                 })
@@ -105,12 +105,12 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> bookings = bookingRepository.findByItem_Id(itemId);
         List<Comment> comments = commentRepository.findByItem_Id(itemId);
         Booking nextBooking = bookings.stream()
-                .filter(booking -> booking.getStart().isAfter(Instant.now()))
+                .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                 .filter(booking -> booking.getItem().getOwner().getId().equals(userId))
                 .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED))
                 .min(Comparator.comparing(Booking::getStart)).orElse(null);
         Booking lastBooking = bookings.stream()
-                .filter(booking -> booking.getStart().isBefore(Instant.now()))
+                .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
                 .filter(booking -> booking.getItem().getOwner().getId().equals(userId))
                 .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED))
                 .max(Comparator.comparing(Booking::getStart)).orElse(null);

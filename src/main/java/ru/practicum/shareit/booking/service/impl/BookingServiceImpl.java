@@ -19,7 +19,6 @@ import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,13 +108,13 @@ public class BookingServiceImpl implements BookingService {
             bookings = bookingRepository.findByBookerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
         }
         if (bookingStatus.equals(BookingStatus.CURRENT)) {
-            bookings = bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId, Instant.now(), Instant.now(), Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId, LocalDateTime.now(), LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
         }
         if (bookingStatus.equals(BookingStatus.PAST)) {
-            bookings = bookingRepository.findByBookerIdAndEndIsBefore(userId, Instant.now(), Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndEndIsBefore(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
         }
         if (bookingStatus.equals(BookingStatus.FUTURE)) {
-            bookings = bookingRepository.findByBookerIdAndStartIsAfter(userId, Instant.now(), Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndStartIsAfter(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
         }
         log.info("Booker {} getting all of his bookings with state: {}", userId, status);
         return bookings.stream()
@@ -139,13 +138,13 @@ public class BookingServiceImpl implements BookingService {
             bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
         }
         if (bookingStatus.equals(BookingStatus.CURRENT)) {
-            bookings = bookingRepository.findByItemOwnerIdAndEndIsAfterAndStartIsBefore(userId, Instant.now(), Instant.now(), Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndEndIsAfterAndStartIsBefore(userId, LocalDateTime.now(), LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
         }
         if (bookingStatus.equals(BookingStatus.PAST)) {
-            bookings = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, Instant.now(), Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
         }
         if (bookingStatus.equals(BookingStatus.FUTURE)) {
-            bookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, Instant.now(), Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start"));
         }
         log.info("Owner {} getting all of his bookings with state: {}", userId, status);
         return bookings.stream()
