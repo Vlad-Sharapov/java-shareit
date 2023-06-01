@@ -21,7 +21,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByBookerIdAndEndIsBefore(Long bookerId, Instant end, Sort sort);
 
-
     List<Booking> findByItemOwnerId(Long ownerId, Sort sort);
 
     List<Booking> findByItemOwnerIdAndStatus(Long ownerId, BookingStatus status, Sort sort);
@@ -33,7 +32,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByItemOwnerIdAndEndIsBefore(Long ownerId, Instant end, Sort sort);
 
     List<Booking> findByItem_Id(Long itemId);
-
 
     Optional<Booking> findTopByStatusNotLikeAndBookerIdAndItemId(BookingStatus status, Long bookerId, Long itemId, Sort sort);
 
