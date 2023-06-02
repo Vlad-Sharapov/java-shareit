@@ -19,9 +19,7 @@ import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -69,53 +67,27 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoByOwner> getAllItemsUser(Long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found."));
+    public List<ItemDtoByOwner> getAllUserItems(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found."));
         List<Item> userItems = itemRepository.findByOwnerId(userId);
-        List<Booking> userBookings = bookingRepository.findByItemOwnerId(userId, Sort.by(Sort.Direction.DESC, "start"));
-        List<Comment> userItemsComments = commentRepository.findByItem_IdIn(userItems.stream()
+        List<Booking> bookings = bookingRepository.findByItemOwnerId(userId, Sort.by(Sort.Direction.DESC, "start"));
+        List<Comment> comments = commentRepository.findByItem_IdIn(userItems.stream()
                 .map(Item::getId)
                 .collect(Collectors.toList()));
         log.info("User {} getting all of his items", userId);
         return userItems.stream()
-                .map(item -> {
-                    List<Comment> comments = userItemsComments.stream()
-                            .filter(commentItem -> item.getId().equals(commentItem.getId()))
-                            .collect(Collectors.toList());
-                    List<Booking> bookings = userBookings.stream()
-                            .filter(booking -> booking.getItem().getOwner().getId().equals(userId))
-                            .filter(booking -> booking.getItem().getId().equals(item.getId()))
-                            .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED))
-                            .collect(Collectors.toList());
-                    Booking nextBooking = bookings.stream()
-                            .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                            .min(Comparator.comparing(Booking::getStart)).orElse(null);
-                    Booking lastBooking = bookings.stream()
-                            .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
-                            .max(Comparator.comparing(Booking::getStart)).orElse(null);
-                    return ItemMapper.toItemDtoByOwner(item, lastBooking, nextBooking, comments);
-                })
+                .map(item -> toItemDtoByOwner(item, user, comments, bookings))
                 .collect(Collectors.toList());
     }
 
     @Override
     public ItemDtoByOwner getItem(Long userId, Long itemId) {
-        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found."));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Item not found."));
         List<Booking> bookings = bookingRepository.findByItem_Id(itemId);
         List<Comment> comments = commentRepository.findByItem_Id(itemId);
-        Booking nextBooking = bookings.stream()
-                .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
-                .filter(booking -> booking.getItem().getOwner().getId().equals(userId))
-                .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED))
-                .min(Comparator.comparing(Booking::getStart)).orElse(null);
-        Booking lastBooking = bookings.stream()
-                .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
-                .filter(booking -> booking.getItem().getOwner().getId().equals(userId))
-                .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED))
-                .max(Comparator.comparing(Booking::getStart)).orElse(null);
         log.info("User {} getting an item with id - {}", userId, itemId);
-        return toItemDtoByOwner(item, lastBooking, nextBooking, comments);
+        return toItemDtoByOwner(item, user, comments, bookings);
     }
 
     @Override
@@ -148,5 +120,4 @@ public class ItemServiceImpl implements ItemService {
         }
         throw new BadRequestException("User hasn't completed the rental of the item yet.");
     }
-
 }

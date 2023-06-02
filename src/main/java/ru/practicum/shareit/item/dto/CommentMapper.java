@@ -6,8 +6,9 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommentMapper {
 
@@ -22,7 +23,6 @@ public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {
 
-
         ZoneId zoneId = ZoneId.of("UTC+3");
         ZonedDateTime zonedStartDate = comment.getCreated().atZone(zoneId);
 
@@ -35,13 +35,9 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentDto> toCommentDto(Iterable<Comment> comments) {
-
-        List<CommentDto> commentsDto = new ArrayList<>();
-
-        for (Comment comment : comments) {
-            commentsDto.add(toCommentDto(comment));
-        }
-        return commentsDto;
+    public static List<CommentDto> toCommentDto(Collection<Comment> comments) {
+        return comments.stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
     }
 }

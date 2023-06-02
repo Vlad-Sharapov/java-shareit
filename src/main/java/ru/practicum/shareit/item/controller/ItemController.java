@@ -40,13 +40,13 @@ public class ItemController {
 
 
     @GetMapping
-    public List<ItemDtoByOwner> getAllUser(@RequestHeader(USER_ID_HEADER) long userId) {
-        return itemService.getAllItemsUser(userId);
+    public List<ItemDtoByOwner> allUserItems(@RequestHeader(USER_ID_HEADER) long userId) {
+        return itemService.getAllUserItems(userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoByOwner get(@RequestHeader(USER_ID_HEADER) long userId,
-                              @PathVariable Long itemId) {
+    public ItemDtoByOwner item(@RequestHeader(USER_ID_HEADER) long userId,
+                               @PathVariable Long itemId) {
         return itemService.getItem(userId, itemId);
     }
 

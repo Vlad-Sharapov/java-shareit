@@ -16,7 +16,6 @@ public class BookingMapper {
         LocalDateTime endDate = bookingDto.getEnd();
         LocalDateTime startDate = bookingDto.getStart();
 
-
         booking.setId(bookingDto.getId());
         booking.setStart(startDate);
         booking.setEnd(endDate);

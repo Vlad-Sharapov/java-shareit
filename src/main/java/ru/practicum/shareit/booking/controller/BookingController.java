@@ -36,20 +36,20 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public BookingDtoOutput get(@RequestHeader(USER_ID_HEADER) Long userId,
-                                @PathVariable Long bookingId) {
-        return bookingService.get(userId, bookingId);
+    public BookingDtoOutput booking(@RequestHeader(USER_ID_HEADER) Long userId,
+                                    @PathVariable Long bookingId) {
+        return bookingService.getBooking(userId, bookingId);
     }
 
     @GetMapping
-    public List<BookingDtoOutput> allFromUser(@RequestHeader(USER_ID_HEADER) Long userId,
+    public List<BookingDtoOutput> allUserBookings(@RequestHeader(USER_ID_HEADER) Long userId,
                                               @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllFromUser(userId, state);
+        return bookingService.getAllUserBookings(userId, state);
     }
 
     @GetMapping("/owner")
-    public List<BookingDtoOutput> allFromOwner(@RequestHeader(USER_ID_HEADER) Long userId,
+    public List<BookingDtoOutput> allOwnerBookings(@RequestHeader(USER_ID_HEADER) Long userId,
                                                @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllFromOwner(userId, state);
+        return bookingService.getAllOwnerBookings(userId, state);
     }
 }
