@@ -45,6 +45,7 @@ public class ItemMapper {
         itemDtoByOwner.setComments(CommentMapper.toCommentDto(comments));
         return itemDtoByOwner;
     }
+
     public static ItemDtoByOwner toItemDtoByOwner(Item item, User user, List<Comment> userComments, List<Booking> userBookings) {
         LocalDateTime now = LocalDateTime.now();
         Booking nextBooking = userBookings.stream()
