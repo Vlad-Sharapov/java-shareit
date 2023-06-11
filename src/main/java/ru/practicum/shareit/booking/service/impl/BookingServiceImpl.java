@@ -130,22 +130,22 @@ public class BookingServiceImpl implements BookingService {
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
         List<Booking> bookings = new ArrayList<>();
         BookingStatus bookingStatus = BookingStatus.valueOf(status);
-        if (bookingStatus == (BookingStatus.ALL)) {
+        if (bookingStatus == BookingStatus.ALL) {
             bookings = bookingRepository.findByItemOwnerId(userId, Sort.by(Sort.Direction.DESC, "start"));
         }
-        if (bookingStatus == (BookingStatus.WAITING)) {
+        if (bookingStatus == BookingStatus.WAITING) {
             bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
         }
-        if (bookingStatus == (BookingStatus.REJECTED)) {
+        if (bookingStatus == BookingStatus.REJECTED) {
             bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
         }
-        if (bookingStatus == (BookingStatus.CURRENT)) {
+        if (bookingStatus == BookingStatus.CURRENT) {
             bookings = bookingRepository.findByItemOwnerIdAndEndIsAfterAndStartIsBefore(userId, now, now, Sort.by(Sort.Direction.DESC, "start"));
         }
-        if (bookingStatus == (BookingStatus.PAST)) {
+        if (bookingStatus == BookingStatus.PAST) {
             bookings = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, now, Sort.by(Sort.Direction.DESC, "start"));
         }
-        if (bookingStatus == (BookingStatus.FUTURE)) {
+        if (bookingStatus == BookingStatus.FUTURE) {
             bookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, now, Sort.by(Sort.Direction.DESC, "start"));
         }
         log.info("Owner {} getting all of his bookings with state: {}", userId, status);
