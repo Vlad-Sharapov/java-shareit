@@ -4,31 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.booking.enums.BookingStatus;
+import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingDto {
+public class BookingDtoOutput {
     private Long id;
-    @FutureOrPresent
-    @NotNull
     private LocalDateTime start;
-    @FutureOrPresent
-    @NotNull
     private LocalDateTime end;
-    private Long itemId;
-    private Long bookerId;
+    private ItemDto item;
+    private UserDto booker;
     private BookingStatus status;
-
 }
-
 
