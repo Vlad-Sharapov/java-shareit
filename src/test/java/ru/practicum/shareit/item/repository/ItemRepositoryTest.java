@@ -137,11 +137,10 @@ class ItemRepositoryTest extends EntitiesForItemTests {
                 hasProperty("available", equalTo(testItem.getAvailable()))
         ));
     }
-    
+
     @Test
     void findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-
         List<Item> findEntities =
                 itemRepository.findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase("УчеБ",
                         "УчеБ", pageRequest);
