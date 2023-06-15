@@ -33,7 +33,6 @@ class UserServiceImplTest {
     User user1 = User.builder().id(1L).name("user1").email("newuser1@mail.ru").build();
     User user1Updated = User.builder().id(1L).name("user1Update").email("newuser1update@mail.ru").build();
     UserDto user1Dto = UserDto.builder().name("user1").email("newuser1@mail.ru").build();
-    
 
     @BeforeEach
     public void beforeEach() {
