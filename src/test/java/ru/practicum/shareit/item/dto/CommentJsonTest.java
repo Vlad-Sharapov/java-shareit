@@ -15,11 +15,11 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 class CommentJsonTest {
 
     @Autowired
-    private JacksonTester<CommentDto> JsonItemRequestDto;
+    private JacksonTester<CommentDto> jsonItemRequestDto;
 
     @Test
     void shouldSerializationItemRequestDto() throws IOException {
-        JsonContent<CommentDto> result = JsonItemRequestDto.write(CommentDto.builder()
+        JsonContent<CommentDto> result = jsonItemRequestDto.write(CommentDto.builder()
                 .id(1L)
                 .itemId(1L)
                 .text("text")

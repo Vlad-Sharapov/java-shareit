@@ -17,11 +17,11 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 class ItemRequestJsonTest {
 
     @Autowired
-    private JacksonTester<ItemRequestDto> JsonItemRequestDto;
+    private JacksonTester<ItemRequestDto> jsonItemRequestDto;
 
     @Test
     void shouldSerializationItemRequestDto() throws IOException {
-        JsonContent<ItemRequestDto> result = JsonItemRequestDto.write(ItemRequestDto.builder()
+        JsonContent<ItemRequestDto> result = jsonItemRequestDto.write(ItemRequestDto.builder()
                 .id(1L)
                 .requestorId(1L)
                 .created(LocalDateTime.now().withNano(0))

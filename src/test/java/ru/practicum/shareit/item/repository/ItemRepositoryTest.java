@@ -12,7 +12,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.impl.EntitiesForItemTests;
 import ru.practicum.shareit.user.model.User;
 
-
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,7 +29,7 @@ class ItemRepositoryTest extends EntitiesForItemTests {
     private ItemRepository itemRepository;
 
     @BeforeEach
-    public void BeforeEach() {
+    public void beforeEach() {
 
         users = List.of(
                 user2.toBuilder()
@@ -138,9 +137,11 @@ class ItemRepositoryTest extends EntitiesForItemTests {
                 hasProperty("available", equalTo(testItem.getAvailable()))
         ));
     }
+    
     @Test
     void findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase() {
         PageRequest pageRequest = PageRequest.of(0, 10);
+
         List<Item> findEntities =
                 itemRepository.findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase("УчеБ",
                         "УчеБ", pageRequest);
