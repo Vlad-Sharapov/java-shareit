@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +13,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.BadRequestException;
-import ru.practicum.shareit.exception.ObjectNotFoundException;
+import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.booking.enums.BookingStatus;
@@ -38,17 +39,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDtoOutput add(Long userId, BookingDto bookingDto) {
         checkDateTimeInterval(bookingDto.getStart(), bookingDto.getEnd());
-        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
-        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new ObjectNotFoundException("Item not found.")); // nullPoiEx?
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new EntityNotFoundException("Item not found."));
         if (userId.equals(item.getOwner().getId())) {
-            throw new ObjectNotFoundException("Booker is an owner");
+            throw new EntityNotFoundException("Booker is an owner");
         }
         if (!item.getAvailable()) {
             throw new BadRequestException("The item is already booked");
         }
         Booking saveBooking = bookingRepository.save(BookingMapper.toBooking(bookingDto, user, item));
-        saveBooking.setStatus(BookingStatus.WAITING);
-        bookingRepository.save(saveBooking);
         log.info("Booker {} add booking {}.", userId, saveBooking);
         return BookingMapper.toBookingDtoOutput(saveBooking);
     }
@@ -56,10 +55,10 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDtoOutput approved(Long userId, Long bookingId, Boolean approved) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ObjectNotFoundException("Booking not found"));
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new EntityNotFoundException("Booking not found"));
         boolean checkOwner = booking.getItem().getOwner().getId().equals(userId);
         if (!checkOwner) {
-            throw new ObjectNotFoundException("Permission denied");
+            throw new EntityNotFoundException("Permission denied");
         }
         if (approved && booking.getStatus() == BookingStatus.APPROVED) {
             throw new BadRequestException("Booking already is APPROVED");
@@ -80,12 +79,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoOutput getBooking(Long userId, Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ObjectNotFoundException("Booking not found"));
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new EntityNotFoundException("Booking not found"));
         Long ownerId = booking.getItem().getOwner().getId();
         Long bookerId = booking.getBooker().getId();
         boolean checkOwnerOrBooker = ownerId.equals(userId) || bookerId.equals(userId);
         if (!checkOwnerOrBooker) {
-            throw new ObjectNotFoundException("Permission denied");
+            throw new EntityNotFoundException("Permission denied");
         }
         log.info("User {} getting an booking with id - {}", userId, bookingId);
         return BookingMapper.toBookingDtoOutput(booking);
@@ -93,29 +92,30 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public List<BookingDtoOutput> getAllUserBookings(Long userId, String status) {
+    public List<BookingDtoOutput> getAllUserBookings(Long userId, String status, int from, int size) {
         checkEnumExist(status);
         LocalDateTime now = LocalDateTime.now();
-        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by(Sort.Direction.DESC, "start"));
+        userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         List<Booking> bookings = new ArrayList<>();
-        BookingStatus bookingStatus = BookingStatus.valueOf(status);
+        BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
         if (bookingStatus == BookingStatus.ALL) {
-            bookings = bookingRepository.findByBookerId(userId, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerId(userId, pageRequest);
         }
         if (bookingStatus == BookingStatus.WAITING) {
-            bookings = bookingRepository.findByBookerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndStatus(userId, bookingStatus, pageRequest);
         }
         if (bookingStatus == BookingStatus.REJECTED) {
-            bookings = bookingRepository.findByBookerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndStatus(userId, bookingStatus,pageRequest);
         }
         if (bookingStatus == BookingStatus.CURRENT) {
-            bookings = bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId, now, now, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId, now, now, pageRequest);
         }
         if (bookingStatus == BookingStatus.PAST) {
-            bookings = bookingRepository.findByBookerIdAndEndIsBefore(userId, now, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndEndIsBefore(userId, now, pageRequest);
         }
         if (bookingStatus == BookingStatus.FUTURE) {
-            bookings = bookingRepository.findByBookerIdAndStartIsAfter(userId, now, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByBookerIdAndStartIsAfter(userId, now, pageRequest);
         }
         log.info("Booker {} getting all of his bookings with state: {}", userId, status);
         return bookings.stream()
@@ -124,29 +124,30 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoOutput> getAllOwnerBookings(Long userId, String status) {
+    public List<BookingDtoOutput> getAllOwnerBookings(Long userId, String status, int from, int size) {
         checkEnumExist(status);
         LocalDateTime now = LocalDateTime.now();
-        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by(Sort.Direction.DESC, "start"));
+        userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         List<Booking> bookings = new ArrayList<>();
-        BookingStatus bookingStatus = BookingStatus.valueOf(status);
+        BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
         if (bookingStatus == BookingStatus.ALL) {
-            bookings = bookingRepository.findByItemOwnerId(userId, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerId(userId, pageRequest);
         }
         if (bookingStatus == BookingStatus.WAITING) {
-            bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, bookingStatus, pageRequest);
         }
         if (bookingStatus == BookingStatus.REJECTED) {
-            bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, bookingStatus, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, bookingStatus, pageRequest);
         }
         if (bookingStatus == BookingStatus.CURRENT) {
-            bookings = bookingRepository.findByItemOwnerIdAndEndIsAfterAndStartIsBefore(userId, now, now, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndEndIsAfterAndStartIsBefore(userId, now, now, pageRequest);
         }
         if (bookingStatus == BookingStatus.PAST) {
-            bookings = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, now, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, now, pageRequest);
         }
         if (bookingStatus == BookingStatus.FUTURE) {
-            bookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, now, Sort.by(Sort.Direction.DESC, "start"));
+            bookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, now, pageRequest);
         }
         log.info("Owner {} getting all of his bookings with state: {}", userId, status);
         return bookings.stream()

@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Data
 @Entity
 @Table(name = "users", schema = "public")

@@ -10,12 +10,14 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
  */
-
+@Validated
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -40,8 +42,10 @@ public class ItemController {
 
 
     @GetMapping
-    public List<ItemDtoByOwner> allUserItems(@RequestHeader(USER_ID_HEADER) long userId) {
-        return itemService.getAllUserItems(userId);
+    public List<ItemDtoByOwner> allUserItems(@RequestHeader(USER_ID_HEADER) long userId,
+                                             @PositiveOrZero @RequestParam(defaultValue = "0") int from,
+                                             @Positive @RequestParam(defaultValue = "10") int size) {
+        return itemService.getUserItems(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -51,8 +55,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam String text) {
-        return itemService.search(text);
+    public List<ItemDto> search(@RequestParam String text,
+                                @PositiveOrZero @RequestParam(defaultValue = "0") int from,
+                                @Positive @RequestParam(defaultValue = "10") int size) {
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
