@@ -12,9 +12,7 @@ import ru.practicum.shareit.booking.enums.BookingStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
 
@@ -88,19 +86,13 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
                         .build()
         );
 
-        for (User user : users) {
-            em.persist(user);
-        }
+        users.forEach(em::persist);
 
         em.persist(itemRequest);
 
-        for (Item item : items) {
-            em.persist(item);
-        }
+        items.forEach(em::persist);
 
-        for (Booking booking : bookings) {
-            em.persist(booking);
-        }
+        bookings.forEach(em::persist);
 
         em.persist(comment.toBuilder()
                 .id(null)
@@ -111,111 +103,9 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void getAllUserBookings() {
+    void shouldGetAllUserBookingsWhenUseGetAllUserBookings() {
 
-        List<BookingDtoOutput> all = bookingService.getAllUserBookings(users.get(1).getId(), "ALL", 0, 5);
-
-        for (Booking testBooking : bookings) {
-            assertThat(all, hasItem(allOf(
-                    hasProperty("id", notNullValue()),
-                    hasProperty("start", equalTo(testBooking.getStart())),
-                    hasProperty("end", equalTo(testBooking.getEnd())),
-                    hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
-                    hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
-                    hasProperty("status", equalTo(testBooking.getStatus()))
-            )));
-        }
-    }
-
-    @Test
-    void getRejectedUserBookings() {
-
-        List<BookingDtoOutput> all = bookingService.getAllUserBookings(users.get(1).getId(), "REJECTED", 0, 5);
-
-        assertThat(all, hasSize(1));
-        Booking testBooking = bookings.get(2);
-        assertThat(all.get(0), allOf(
-                hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(testBooking.getStart())),
-                hasProperty("end", equalTo(testBooking.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
-                hasProperty("status", equalTo(testBooking.getStatus()))
-        ));
-    }
-
-    @Test
-    void getCurrentlyUserBookings() {
-
-        List<BookingDtoOutput> all = bookingService.getAllUserBookings(users.get(1).getId(), "CURRENT", 0, 5);
-
-        assertThat(all, hasSize(1));
-        Booking testBooking = bookings.get(2);
-        assertThat(all.get(0), allOf(
-                hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(testBooking.getStart())),
-                hasProperty("end", equalTo(testBooking.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
-                hasProperty("status", equalTo(testBooking.getStatus()))
-        ));
-    }
-
-    @Test
-    void getWaitingUserBookings() {
-
-        List<BookingDtoOutput> all = bookingService.getAllUserBookings(users.get(1).getId(), "WAITING", 0, 5);
-
-        assertThat(all, hasSize(1));
-        Booking testBooking = bookings.get(0);
-        assertThat(all.get(0), allOf(
-                hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(testBooking.getStart())),
-                hasProperty("end", equalTo(testBooking.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
-                hasProperty("status", equalTo(testBooking.getStatus()))
-        ));
-    }
-
-    @Test
-    void getPastUserBookings() {
-
-        List<BookingDtoOutput> all = bookingService.getAllUserBookings(users.get(1).getId(), "PAST", 0, 5);
-
-        assertThat(all, hasSize(1));
-        Booking testBooking = bookings.get(0);
-        assertThat(all.get(0), allOf(
-                hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(testBooking.getStart())),
-                hasProperty("end", equalTo(testBooking.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
-                hasProperty("status", equalTo(testBooking.getStatus()))
-        ));
-    }
-
-    @Test
-    void getFutureUserBookings() {
-
-        List<BookingDtoOutput> all = bookingService.getAllUserBookings(users.get(1).getId(), "FUTURE", 0, 5);
-
-        assertThat(all, hasSize(1));
-        Booking testBooking = bookings.get(1);
-        assertThat(all.get(0), allOf(
-                hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(testBooking.getStart())),
-                hasProperty("end", equalTo(testBooking.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
-                hasProperty("status", equalTo(testBooking.getStatus()))
-        ));
-    }
-
-    @Test
-    void getAllOwnerBookings() {
-
-        List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(users.get(0).getId(), "ALL", 0, 5);
+        List<BookingDtoOutput> all = getAllUserBookings(BookingStatus.ALL);
 
         for (Booking testBooking : bookings) {
             assertThat(all, hasItem(allOf(
@@ -230,26 +120,9 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void getRejectedOwnerBookings() {
+    void shouldGetRejectedUserBookingsWhenUseGetAllUserBookingsWithFilterRejected() {
 
-        List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(users.get(0).getId(), "REJECTED", 0, 5);
-
-        assertThat(all, hasSize(1));
-        Booking testBooking = bookings.get(2);
-        assertThat(all.get(0), allOf(
-                hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(testBooking.getStart())),
-                hasProperty("end", equalTo(testBooking.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
-                hasProperty("status", equalTo(testBooking.getStatus()))
-        ));
-    }
-
-    @Test
-    void getCurrentlyOwnerBookings() {
-
-        List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(users.get(0).getId(), "CURRENT", 0, 5);
+        List<BookingDtoOutput> all = getAllUserBookings(BookingStatus.REJECTED);
 
         assertThat(all, hasSize(1));
         Booking testBooking = bookings.get(2);
@@ -264,9 +137,26 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void getWaitingOwnerBookings() {
+    void shouldGetCurrentlyUserBookingsWhenUseGetAllUserBookingsWithFilterCurrent() {
 
-        List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(users.get(0).getId(), "WAITING", 0, 5);
+        List<BookingDtoOutput> all = getAllUserBookings(BookingStatus.CURRENT);
+
+        assertThat(all, hasSize(1));
+        Booking testBooking = bookings.get(2);
+        assertThat(all.get(0), allOf(
+                hasProperty("id", notNullValue()),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
+        ));
+    }
+
+    @Test
+    void shouldGetWaitingUserBookingsWhenUseGetAllUserBookingsWithFilterWaiting() {
+
+        List<BookingDtoOutput> all = getAllUserBookings(BookingStatus.WAITING);
 
         assertThat(all, hasSize(1));
         Booking testBooking = bookings.get(0);
@@ -281,9 +171,9 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void getPastOwnerBookings() {
+    void shouldGetPastUserBookingsWhenUseGetAllOwnerBookingsWithFilterPast() {
 
-        List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(users.get(0).getId(), "PAST", 0, 5);
+        List<BookingDtoOutput> all = getAllUserBookings(BookingStatus.PAST);
 
         assertThat(all, hasSize(1));
         Booking testBooking = bookings.get(0);
@@ -298,9 +188,9 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void getFutureOwnerBookings() {
+    void shouldGetFutureUserBookingsWhenUseGetAllOwnerBookingsWithFilterFuture() {
 
-        List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(users.get(0).getId(), "FUTURE", 0, 5);
+        List<BookingDtoOutput> all = getAllUserBookings(BookingStatus.FUTURE);
 
         assertThat(all, hasSize(1));
         Booking testBooking = bookings.get(1);
@@ -312,5 +202,115 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
                 hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
+    }
+
+    @Test
+    void shouldGetAllOwnerBookingsWhenUseGetAllOwnerBookings() {
+
+        List<BookingDtoOutput> all = getAllOwnerBookings(BookingStatus.ALL);
+
+        for (Booking testBooking : bookings) {
+            assertThat(all, hasItem(allOf(
+                    hasProperty("id", notNullValue()),
+                    hasProperty("start", equalTo(testBooking.getStart())),
+                    hasProperty("end", equalTo(testBooking.getEnd())),
+                    hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                    hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                    hasProperty("status", equalTo(testBooking.getStatus()))
+            )));
+        }
+    }
+
+    @Test
+    void shouldGetRejectedOwnerBookingsWhenUseGetAllOwnerBookingsWithFilterRejected() {
+
+        List<BookingDtoOutput> all = getAllOwnerBookings(BookingStatus.REJECTED);
+
+        assertThat(all, hasSize(1));
+        Booking testBooking = bookings.get(2);
+        assertThat(all.get(0), allOf(
+                hasProperty("id", notNullValue()),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
+        ));
+    }
+
+    @Test
+    void shouldGetCurrentlyOwnerBookingsWhenUseGetAllOwnerBookingsWithFilterCurrent() {
+
+        List<BookingDtoOutput> all = getAllOwnerBookings(BookingStatus.CURRENT);
+
+        assertThat(all, hasSize(1));
+        Booking testBooking = bookings.get(2);
+        assertThat(all.get(0), allOf(
+                hasProperty("id", notNullValue()),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
+        ));
+    }
+
+    @Test
+    void shouldGetWaitingOwnerBookingsWhenUseGetAllOwnerBookingsWithFilterWaiting() {
+
+        List<BookingDtoOutput> all = getAllOwnerBookings(BookingStatus.WAITING);
+
+        assertThat(all, hasSize(1));
+        Booking testBooking = bookings.get(0);
+        assertThat(all.get(0), allOf(
+                hasProperty("id", notNullValue()),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
+        ));
+    }
+
+    @Test
+    void shouldGetPastOwnerBookingsWhenUseGetAllOwnerBookingsWithFilterPast() {
+
+        List<BookingDtoOutput> all = getAllOwnerBookings(BookingStatus.PAST);
+
+        assertThat(all, hasSize(1));
+        Booking testBooking = bookings.get(0);
+        assertThat(all.get(0), allOf(
+                hasProperty("id", notNullValue()),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
+        ));
+    }
+
+    @Test
+    void shouldGetFutureOwnerBookingsWhenUseGetAllOwnerBookingsWithFilterFuture() {
+
+        List<BookingDtoOutput> all = getAllOwnerBookings(BookingStatus.FUTURE);
+
+        assertThat(all, hasSize(1));
+        Booking testBooking = bookings.get(1);
+        assertThat(all.get(0), allOf(
+                hasProperty("id", notNullValue()),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
+        ));
+    }
+
+    private List<BookingDtoOutput> getAllUserBookings(BookingStatus status) {
+        return bookingService.getAllUserBookings(users.get(1).getId(), status.name(), 0, 5);
+    }
+
+    private List<BookingDtoOutput> getAllOwnerBookings(BookingStatus status) {
+        return bookingService.getAllOwnerBookings(users.get(0).getId(), status.name(), 0, 5);
     }
 }

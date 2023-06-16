@@ -12,7 +12,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoByOwner;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.EntityManager;
 
@@ -78,23 +77,13 @@ class ItemServiceImplIntegrationTest extends EntitiesForItemTests {
                         .build()
         );
 
-        for (User user : users) {
-            em.persist(user);
-        }
-        em.flush();
+        users.forEach(em::persist);
 
         em.persist(itemRequest);
-        em.flush();
 
-        for (Item item : items) {
-            em.persist(item);
-        }
-        em.flush();
+        items.forEach(em::persist);
 
-        for (Booking booking : bookings) {
-            em.persist(booking);
-        }
-        em.flush();
+        bookings.forEach(em::persist);
 
         em.persist(comment.toBuilder()
                 .id(null)

@@ -38,6 +38,9 @@ class ItemControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
+
+
     UserDto user1 = UserDto.builder().name("user1").email("user1@mail.ru").build();
 
     ItemDto item1 = ItemDto.builder()
@@ -100,7 +103,7 @@ class ItemControllerTest {
 
         this.mockMvc.perform(post("/items")
                         .content(asJsonString(item1))
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -120,13 +123,13 @@ class ItemControllerTest {
     }
 
     @Test
-    void shouldStatus400WhenUsePostItemsWithEntityNotFoundException() throws Exception {
+    void shouldStatus400WhenUsePostItemsWithUserOrItemNotFound() throws Exception {
         when(itemService.saveItem(Mockito.anyLong(), Mockito.any(ItemDto.class)))
                 .thenThrow(new EntityNotFoundException("not found"));
 
         this.mockMvc.perform(post("/items")
                         .content(asJsonString(item1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 111L)
+                        .header(USER_ID_HEADER, 111L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -141,7 +144,7 @@ class ItemControllerTest {
 
         this.mockMvc.perform(patch("/items/{itemId}", 1)
                         .content(asJsonString(updateItem1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -163,13 +166,13 @@ class ItemControllerTest {
     }
 
     @Test
-    void shouldItemUpdateStatus400WhenUsePatchItemsWithEntityNotFoundException() throws Exception {
+    void shouldItemUpdateStatus400WhenUsePatchItemsWhereItemOrUserNotFound() throws Exception {
         when(itemService.updateItem(Mockito.anyLong(), Mockito.anyLong(), Mockito.any(ItemDto.class)))
                 .thenThrow(new EntityNotFoundException("not found"));
 
         this.mockMvc.perform(patch("/items/{itemId}", 1)
                         .content(asJsonString(updateItem1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header(USER_ID_HEADER, 2L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -183,7 +186,7 @@ class ItemControllerTest {
 
         this.mockMvc.perform(get("/items/{itemId}", 1)
                         .content(asJsonString(item1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemDtoByOwner.getId()))
@@ -212,7 +215,7 @@ class ItemControllerTest {
 
         this.mockMvc.perform(get("/items", 1)
                         .content(asJsonString(item1)).contentType("application/json")
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -260,7 +263,7 @@ class ItemControllerTest {
 
         this.mockMvc.perform(post("/items/{itemId}/comment", 1)
                         .content(asJsonString(commentDto))
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

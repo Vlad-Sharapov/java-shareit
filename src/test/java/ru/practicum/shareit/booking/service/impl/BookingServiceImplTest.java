@@ -312,13 +312,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllUserBookings(user1.getId(), "REJECTED", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(testBookings.get(0).getId())),
-                hasProperty("start", equalTo(testBookings.get(0).getStart())),
-                hasProperty("end", equalTo(testBookings.get(0).getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBookings.get(0).getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBookings.get(0).getBooker()))),
-                hasProperty("status", equalTo(testBookings.get(0).getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 
@@ -339,13 +340,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllUserBookings(user1.getId(), "CURRENT", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(testBookings.get(0).getId())),
-                hasProperty("start", equalTo(testBookings.get(0).getStart())),
-                hasProperty("end", equalTo(testBookings.get(0).getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBookings.get(0).getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBookings.get(0).getBooker()))),
-                hasProperty("status", equalTo(testBookings.get(0).getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 
@@ -363,13 +365,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllUserBookings(user1.getId(), "PAST", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(testBookings.get(0).getId())),
-                hasProperty("start", equalTo(testBookings.get(0).getStart())),
-                hasProperty("end", equalTo(testBookings.get(0).getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBookings.get(0).getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBookings.get(0).getBooker()))),
-                hasProperty("status", equalTo(testBookings.get(0).getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 
@@ -387,13 +390,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllUserBookings(user1.getId(), "FUTURE", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(booking1.getId())),
-                hasProperty("start", equalTo(booking1.getStart())),
-                hasProperty("end", equalTo(booking1.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(booking1.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(booking1.getBooker()))),
-                hasProperty("status", equalTo(booking1.getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 
@@ -476,13 +480,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(user1.getId(), "REJECTED", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(testBookings.get(0).getId())),
-                hasProperty("start", equalTo(testBookings.get(0).getStart())),
-                hasProperty("end", equalTo(testBookings.get(0).getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBookings.get(0).getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBookings.get(0).getBooker()))),
-                hasProperty("status", equalTo(testBookings.get(0).getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 
@@ -503,13 +508,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(user1.getId(), "CURRENT", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(testBookings.get(0).getId())),
-                hasProperty("start", equalTo(testBookings.get(0).getStart())),
-                hasProperty("end", equalTo(testBookings.get(0).getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBookings.get(0).getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBookings.get(0).getBooker()))),
-                hasProperty("status", equalTo(testBookings.get(0).getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 
@@ -527,13 +533,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(user1.getId(), "PAST", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(testBookings.get(0).getId())),
-                hasProperty("start", equalTo(testBookings.get(0).getStart())),
-                hasProperty("end", equalTo(testBookings.get(0).getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(testBookings.get(0).getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(testBookings.get(0).getBooker()))),
-                hasProperty("status", equalTo(testBookings.get(0).getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 
@@ -551,13 +558,14 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
         List<BookingDtoOutput> all = bookingService.getAllOwnerBookings(user1.getId(), "FUTURE", 0, 5);
 
         assertThat(all, hasSize(1));
+        Booking testBooking = testBookings.get(0);
         assertThat(all, hasItem(allOf(
-                hasProperty("id", equalTo(booking1.getId())),
-                hasProperty("start", equalTo(booking1.getStart())),
-                hasProperty("end", equalTo(booking1.getEnd())),
-                hasProperty("item", equalTo(ItemMapper.toItemDto(booking1.getItem()))),
-                hasProperty("booker", equalTo(UserMapper.toUserDto(booking1.getBooker()))),
-                hasProperty("status", equalTo(booking1.getStatus()))
+                hasProperty("id", equalTo(testBooking.getId())),
+                hasProperty("start", equalTo(testBooking.getStart())),
+                hasProperty("end", equalTo(testBooking.getEnd())),
+                hasProperty("item", equalTo(ItemMapper.toItemDto(testBooking.getItem()))),
+                hasProperty("booker", equalTo(UserMapper.toUserDto(testBooking.getBooker()))),
+                hasProperty("status", equalTo(testBooking.getStatus()))
         )));
     }
 

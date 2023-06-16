@@ -7,10 +7,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.impl.EntitiesForItemTests;
-import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
@@ -72,19 +70,13 @@ class ItemRepositoryTest extends EntitiesForItemTests {
                         .build()
         );
 
-        for (User user : users) {
-            em.persist(user);
-        }
+        users.forEach(em::persist);
 
         em.persist(itemRequest);
 
-        for (Item item : items) {
-            em.persist(item);
-        }
+        items.forEach(em::persist);
 
-        for (Booking booking : bookings) {
-            em.persist(booking);
-        }
+        bookings.forEach(em::persist);
 
         em.persist(comment.toBuilder()
                 .id(null)
@@ -96,7 +88,7 @@ class ItemRepositoryTest extends EntitiesForItemTests {
     }
 
     @Test
-    void findByOwnerId() {
+    void shouldFindEntitiesByOwnerIdWhenUseFindByOwnerId() {
         List<Item> findEntities = itemRepository.findByOwnerId(users.get(0).getId());
 
         assertThat(findEntities, hasSize(2));
@@ -111,7 +103,7 @@ class ItemRepositoryTest extends EntitiesForItemTests {
     }
 
     @Test
-    void findByRequestIdIn() {
+    void shouldFindEntitiesByRequestIdInWhenUseFindByRequestIdIn() {
         Item testItem = items.get(0);
         List<Item> findEntities = itemRepository.findByRequestIdIn(List.of(itemRequest.getId()));
 
@@ -125,7 +117,7 @@ class ItemRepositoryTest extends EntitiesForItemTests {
     }
 
     @Test
-    void findByRequestId() {
+    void shouldFindEntitiesByRequestIdWhenUseFindByRequestId() {
         Item testItem = items.get(0);
         List<Item> findEntities = itemRepository.findByRequestId(itemRequest.getId());
 
@@ -139,7 +131,7 @@ class ItemRepositoryTest extends EntitiesForItemTests {
     }
 
     @Test
-    void findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase() {
+    void shouldFindSearchEntitiesIdWhenUseFindAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Item> findEntities =
                 itemRepository.findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase("УчеБ",

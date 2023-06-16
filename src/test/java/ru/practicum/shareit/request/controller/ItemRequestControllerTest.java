@@ -36,6 +36,9 @@ class ItemRequestControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
+
+
     UserDto userDto = UserDto.builder().name("user1").email("user1@mail.ru").build();
 
     ItemDto itemDto = ItemDto.builder()
@@ -61,7 +64,7 @@ class ItemRequestControllerTest {
 
         this.mockMvc.perform(post("/requests")
                         .content(asJsonString(itemRequestDto))
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -75,13 +78,13 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void shouldThrowsStatus404WhenUsePostCreateRequestWithEntityNotFoundException() throws Exception {
+    void shouldThrowsStatus404WhenUsePostCreateRequestWithUserNotFound() throws Exception {
         when(itemRequestService.createRequest(Mockito.anyLong(), Mockito.any(ItemRequestDto.class)))
                 .thenThrow(new EntityNotFoundException("not Found"));
 
         this.mockMvc.perform(post("/requests")
                         .content(asJsonString(itemRequestDto))
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -95,7 +98,7 @@ class ItemRequestControllerTest {
                 .thenReturn(List.of(itemRequestDto));
 
         this.mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -108,12 +111,12 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void shouldThrowsStatus404WhenUsePostItemsWithEntityNotFoundException() throws Exception {
+    void shouldThrowsStatus404WhenUseGetUserRequestsWithUserNotFound() throws Exception {
         when(itemRequestService.getUserRequests(Mockito.anyLong()))
                 .thenThrow(new EntityNotFoundException("not Found"));
 
         this.mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1L)
+                        .header(USER_ID_HEADER, 1L)
                         .accept("*/*"))
                 .andExpect(status().isNotFound());
     }
@@ -124,7 +127,7 @@ class ItemRequestControllerTest {
                 .thenReturn(List.of(itemRequestDto));
 
         this.mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 2L)
+                        .header(USER_ID_HEADER, 2L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -142,7 +145,7 @@ class ItemRequestControllerTest {
                 .thenReturn(itemRequestDto);
 
         this.mockMvc.perform(get("/requests/{id}", 1)
-                        .header("X-Sharer-User-Id", 2L)
+                        .header(USER_ID_HEADER, 2L)
                         .accept("*/*"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemRequestDto.getId()))

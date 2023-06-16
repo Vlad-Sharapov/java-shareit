@@ -83,19 +83,13 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                         .build()
         );
 
-        for (User user : users) {
-            em.persist(user);
-        }
+        users.forEach(em::persist);
 
         em.persist(itemRequest);
 
-        for (Item item : items) {
-            em.persist(item);
-        }
+        items.forEach(em::persist);
 
-        for (Booking booking : bookings) {
-            em.persist(booking);
-        }
+        bookings.forEach(em::persist);
 
         em.persist(comment.toBuilder()
                 .id(null)
@@ -106,26 +100,28 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void findByBookerId() {
+    void shouldFindRequestsByBookerIdWhenUseFindByBookerId() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByBookerId(users.get(1).getId(), pageRequest);
-
         assertThat(findEntities, hasSize(3));
         for (Booking testBooking : bookings) {
+            Item testBookingItem = testBooking.getItem();
+            User testBookingBooker = testBooking.getBooker();
+
             assertThat(findEntities, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("start", equalTo(testBooking.getStart())),
                     hasProperty("end", equalTo(testBooking.getEnd())),
                     hasProperty("item", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getItem().getName())),
-                            hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                            hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                            hasProperty("name", equalTo(testBookingItem.getName())),
+                            hasProperty("description", equalTo(testBookingItem.getDescription())),
+                            hasProperty("available", equalTo(testBookingItem.getAvailable()))
                     )),
                     hasProperty("booker", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                            hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                            hasProperty("name", equalTo(testBookingBooker.getName())),
+                            hasProperty("email", equalTo(testBookingBooker.getEmail()))
                     )),
                     hasProperty("status", equalTo(testBooking.getStatus()))
             )));
@@ -133,11 +129,13 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void findByBookerIdAndStatusApproved() {
+    void shouldFindRequestsByBookerIdAndStatusApprovedWhenFindByBookerIdAndStatusApproved() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByBookerIdAndStatus(users.get(1).getId(),
                 BookingStatus.APPROVED, pageRequest);
         Booking testBooking = bookings.get(1);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -146,14 +144,14 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
@@ -161,11 +159,13 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
 
 
     @Test
-    void findByBookerIdAndEndIsAfterAndStartIsBefore() {
+    void shouldFindRequestsByBookerIdAndEndIsAfterAndStartIsBeforeWhenFindByBookerIdAndEndIsAfterAndStartIsBefore() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(users.get(1).getId(),
                 LocalDateTime.now(), LocalDateTime.now(), pageRequest);
         Booking testBooking = bookings.get(2);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -174,25 +174,27 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
     }
 
     @Test
-    void findByBookerIdAndStartIsAfter() {
+    void shouldFindRequestsByBookerIdAndStartIsAfterWhenUseFindByBookerIdAndStartIsAfter() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByBookerIdAndStartIsAfter(users.get(1).getId(),
                 LocalDateTime.now(), pageRequest);
         Booking testBooking = bookings.get(1);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -201,25 +203,27 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
     }
 
     @Test
-    void findByBookerIdAndEndIsBefore() {
+    void shouldFindRequestsByBookerIdAndEndIsBeforeWhenUseFindByBookerIdAndEndIsBefore() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByBookerIdAndEndIsBefore(users.get(1).getId(),
                 LocalDateTime.now(), pageRequest);
         Booking testBooking = bookings.get(0);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -228,40 +232,42 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
     }
 
     @Test
-    void findByItemOwnerId() {
+    void shouldFindRequestsByOwnerIdWhenUseFindByOwnerId() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByItemOwnerId(users.get(0).getId(), pageRequest);
 
         assertThat(findEntities, hasSize(3));
         for (Booking testBooking : bookings) {
+            Item testBookingItem = testBooking.getItem();
+            User testBookingBooker = testBooking.getBooker();
             assertThat(findEntities, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("start", equalTo(testBooking.getStart())),
                     hasProperty("end", equalTo(testBooking.getEnd())),
                     hasProperty("item", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getItem().getName())),
-                            hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                            hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                            hasProperty("name", equalTo(testBookingItem.getName())),
+                            hasProperty("description", equalTo(testBookingItem.getDescription())),
+                            hasProperty("available", equalTo(testBookingItem.getAvailable()))
                     )),
                     hasProperty("booker", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                            hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                            hasProperty("name", equalTo(testBookingBooker.getName())),
+                            hasProperty("email", equalTo(testBookingBooker.getEmail()))
                     )),
                     hasProperty("status", equalTo(testBooking.getStatus()))
             )));
@@ -269,11 +275,13 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void findByItemOwnerIdAndStatus() {
+    void shouldFindRequestsByOwnerIdAndStatusApprovedWhenFindByOwnerIdAndStatusApproved() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByItemOwnerIdAndStatus(users.get(0).getId(),
                 BookingStatus.APPROVED, pageRequest);
         Booking testBooking = bookings.get(1);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -282,25 +290,27 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
     }
 
     @Test
-    void findByItemOwnerIdAndEndIsAfterAndStartIsBefore() {
+    void shouldFindRequestsByOwnerIdAndEndIsAfterAndStartIsBeforeWhenFindByOwnerIdAndEndIsAfterAndStartIsBefore() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByItemOwnerIdAndEndIsAfterAndStartIsBefore(users.get(0).getId(),
                 LocalDateTime.now(), LocalDateTime.now(), pageRequest);
         Booking testBooking = bookings.get(2);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -309,25 +319,27 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
     }
 
     @Test
-    void findByItemOwnerIdAndStartIsAfter() {
+    void shouldFindRequestsByOwnerIdAndStartIsAfterWhenUseFindByOwnerIdAndStartIsAfter() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByItemOwnerIdAndStartIsAfter(users.get(0).getId(),
                 LocalDateTime.now(), pageRequest);
         Booking testBooking = bookings.get(1);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -336,25 +348,27 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
     }
 
     @Test
-    void findByItemOwnerIdAndEndIsBefore() {
+    void shouldFindRequestsByOwnerIdAndEndIsBeforeWhenUseFindByItemOwnerIdAndEndIsBefore() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Booking> findEntities = bookingRepository.findByItemOwnerIdAndEndIsBefore(users.get(0).getId(),
                 LocalDateTime.now(), pageRequest);
         Booking testBooking = bookings.get(0);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         assertThat(findEntities, hasSize(1));
         assertThat(findEntities.get(0), allOf(
@@ -363,40 +377,43 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                 hasProperty("end", equalTo(testBooking.getEnd())),
                 hasProperty("item", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getItem().getName())),
-                        hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                        hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                        hasProperty("name", equalTo(testBookingItem.getName())),
+                        hasProperty("description", equalTo(testBookingItem.getDescription())),
+                        hasProperty("available", equalTo(testBookingItem.getAvailable()))
                 )),
                 hasProperty("booker", allOf(
                         hasProperty("id", notNullValue()),
-                        hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                        hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                        hasProperty("name", equalTo(testBookingBooker.getName())),
+                        hasProperty("email", equalTo(testBookingBooker.getEmail()))
                 )),
                 hasProperty("status", equalTo(testBooking.getStatus()))
         ));
     }
 
     @Test
-    void findByItem_IdAndItemOwnerId() {
+    void shouldFindByItemIdAndItemOwnerId() {
         List<Booking> findEntities = bookingRepository.findByItem_IdAndItemOwnerId(items.get(0).getId(),
                 users.get(0).getId());
 
         assertThat(findEntities, hasSize(2));
         for (Booking testBooking : List.of(bookings.get(0), bookings.get(1))) {
+            Item testBookingItem = testBooking.getItem();
+            User testBookingBooker = testBooking.getBooker();
+
             assertThat(findEntities, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("start", equalTo(testBooking.getStart())),
                     hasProperty("end", equalTo(testBooking.getEnd())),
                     hasProperty("item", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getItem().getName())),
-                            hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                            hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                            hasProperty("name", equalTo(testBookingItem.getName())),
+                            hasProperty("description", equalTo(testBookingItem.getDescription())),
+                            hasProperty("available", equalTo(testBookingItem.getAvailable()))
                     )),
                     hasProperty("booker", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                            hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                            hasProperty("name", equalTo(testBookingBooker.getName())),
+                            hasProperty("email", equalTo(testBookingBooker.getEmail()))
                     )),
                     hasProperty("status", equalTo(testBooking.getStatus()))
             )));
@@ -404,11 +421,13 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
     }
 
     @Test
-    void findTopByStatusNotLikeAndBookerIdAndItemId() {
+    void shouldFindTopByStatusNotLikeAndBookerIdAndItemId() {
         Optional<Booking> maybeFindEntity = bookingRepository
                 .findTopByStatusNotLikeAndBookerIdAndItemId(BookingStatus.REJECTED, users.get(1).getId(),
                         items.get(0).getId(), Sort.by(Sort.Direction.ASC, "end"));
         Booking testBooking = bookings.get(0);
+        Item testBookingItem = testBooking.getItem();
+        User testBookingBooker = testBooking.getBooker();
 
         if (maybeFindEntity.isPresent()) {
             Booking findEntity = maybeFindEntity.get();
@@ -418,14 +437,14 @@ class BookingRepositoryTest extends EntitiesForBookingTests {
                     hasProperty("end", equalTo(testBooking.getEnd())),
                     hasProperty("item", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getItem().getName())),
-                            hasProperty("description", equalTo(testBooking.getItem().getDescription())),
-                            hasProperty("available", equalTo(testBooking.getItem().getAvailable()))
+                            hasProperty("name", equalTo(testBookingItem.getName())),
+                            hasProperty("description", equalTo(testBookingItem.getDescription())),
+                            hasProperty("available", equalTo(testBookingItem.getAvailable()))
                     )),
                     hasProperty("booker", allOf(
                             hasProperty("id", notNullValue()),
-                            hasProperty("name", equalTo(testBooking.getBooker().getName())),
-                            hasProperty("email", equalTo(testBooking.getBooker().getEmail()))
+                            hasProperty("name", equalTo(testBookingBooker.getName())),
+                            hasProperty("email", equalTo(testBookingBooker.getEmail()))
                     )),
                     hasProperty("status", equalTo(testBooking.getStatus()))
             ));

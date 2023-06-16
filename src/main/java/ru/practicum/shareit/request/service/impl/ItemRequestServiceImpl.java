@@ -44,9 +44,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         List<ItemRequest> itemRequests = itemRequestRepository
                 .findByRequestorId(userId, Sort.by("created").descending());
-        List<Item> itemsOnRequests = itemRepository.findByRequestIdIn(itemRequests.stream()
+        List<Long> requestsIds = itemRequests.stream()
                 .map(ItemRequest::getId)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        List<Item> itemsOnRequests = itemRepository.findByRequestIdIn(requestsIds);
         return ItemRequestMapper.toDtoWithItems(itemRequests, itemsOnRequests);
     }
 
