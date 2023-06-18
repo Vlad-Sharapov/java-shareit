@@ -5,17 +5,6 @@ CREATE TABLE IF NOT EXISTS users
     email VARCHAR(320) UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS items
-(
-    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY UNIQUE,
-    name        VARCHAR(100) NOT NULL,
-    description VARCHAR(512) NOT NULL,
-    available   BOOLEAN      NOT NULL,
-    owner       BIGINT       NOT NULL,
-    request     BIGINT,
-    FOREIGN KEY (owner) REFERENCES users (id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS requests
 (
     id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY UNIQUE,
@@ -24,6 +13,19 @@ CREATE TABLE IF NOT EXISTS requests
     create_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     FOREIGN KEY (requestor) REFERENCES users (id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS items
+(
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY UNIQUE,
+    name        VARCHAR(100) NOT NULL,
+    description VARCHAR(512) NOT NULL,
+    available   BOOLEAN      NOT NULL,
+    owner       BIGINT       NOT NULL,
+    request     BIGINT,
+    FOREIGN KEY (owner) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (request) REFERENCES requests (id) ON DELETE CASCADE
+);
+
 
 CREATE TABLE IF NOT EXISTS bookings
 (
