@@ -73,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoByOwner> getUserItems(Long userId, int from, int size) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found."));
+        userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found."));
         PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by(Sort.Direction.DESC, "start"));
         List<Item> userItems = itemRepository.findByOwnerId(userId);
         List<Booking> bookings = bookingRepository.findByItemOwnerId(userId, pageRequest);
