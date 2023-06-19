@@ -13,8 +13,8 @@ public class BookingMapper {
     public static Booking toBooking(BookingDto bookingDto, User booker, Item item) {
         Booking booking = new Booking();
 
-        LocalDateTime endDate = bookingDto.getEnd().withNano(0);
-        LocalDateTime startDate = bookingDto.getStart().withNano(0);
+        LocalDateTime endDate = bookingDto.getEnd();
+        LocalDateTime startDate = bookingDto.getStart();
 
         booking.setId(bookingDto.getId());
         booking.setStart(startDate);
@@ -26,8 +26,8 @@ public class BookingMapper {
 
     public static BookingDto toBookingDto(Booking booking) {
 
-        LocalDateTime start = booking.getStart().withNano(0);
-        LocalDateTime end = booking.getEnd().withNano(0);
+        LocalDateTime start = booking.getStart();
+        LocalDateTime end = booking.getEnd();
 
         return BookingDto.builder()
                 .id(booking.getId())
@@ -41,8 +41,8 @@ public class BookingMapper {
 
     public static BookingDtoOutput toBookingDtoOutput(Booking booking) {
 
-        LocalDateTime start = booking.getStart().withNano(0);
-        LocalDateTime end = booking.getEnd().withNano(0);
+        LocalDateTime start = booking.getStart();
+        LocalDateTime end = booking.getEnd();
 
         return BookingDtoOutput.builder()
                 .id(booking.getId())

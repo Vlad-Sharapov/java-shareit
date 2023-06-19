@@ -267,7 +267,7 @@ class ItemServiceImplTest extends EntitiesForItemTests {
     void getAllUserItems() {
         when(userRepository.findById(user2.getId()))
                 .thenReturn(Optional.of(user2));
-        when(itemRepository.findByOwnerId(user2.getId()))
+        when(itemRepository.findByOwnerId(Mockito.anyLong(), Mockito.any(Sort.class)))
                 .thenReturn(List.of(item1));
         when(bookingRepository.findByItemOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(booking1, booking2));
@@ -320,7 +320,7 @@ class ItemServiceImplTest extends EntitiesForItemTests {
                 .build();
         when(userRepository.findById(user2.getId()))
                 .thenReturn(Optional.of(user2));
-        when(itemRepository.findByOwnerId(user2.getId()))
+        when(itemRepository.findByOwnerId(Mockito.anyLong(), Mockito.any(Sort.class)))
                 .thenReturn(List.of(item1));
         when(bookingRepository.findByItemOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(nextBooking1, nextBooking2));
@@ -366,7 +366,7 @@ class ItemServiceImplTest extends EntitiesForItemTests {
                 .build();
         when(userRepository.findById(user2.getId()))
                 .thenReturn(Optional.of(user2));
-        when(itemRepository.findByOwnerId(user2.getId()))
+        when(itemRepository.findByOwnerId(Mockito.anyLong(), Mockito.any(Sort.class)))
                 .thenReturn(List.of(item1));
         when(bookingRepository.findByItemOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of(nextBooking1, nextBooking2));
@@ -404,7 +404,7 @@ class ItemServiceImplTest extends EntitiesForItemTests {
     void shouldEmptyListWhenUserWithoutItemsUseGetAllUserItems() {
         when(userRepository.findById(user1.getId()))
                 .thenReturn(Optional.of(user1));
-        when(itemRepository.findByOwnerId(user1.getId()))
+        when(itemRepository.findByOwnerId(Mockito.anyLong(), Mockito.any(Sort.class)))
                 .thenReturn(List.of());
         when(bookingRepository.findByItemOwnerId(Mockito.anyLong(), Mockito.any(Pageable.class)))
                 .thenReturn(List.of());
