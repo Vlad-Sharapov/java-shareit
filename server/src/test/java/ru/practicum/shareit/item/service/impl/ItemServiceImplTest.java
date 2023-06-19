@@ -311,12 +311,12 @@ class ItemServiceImplTest extends EntitiesForItemTests {
     @Test
     void shouldItemWithOnlyNextBookingWhenUseGetAllUserItemsWithTwoNextBookings() {
         Booking nextBooking1 = booking1.toBuilder()
-                .start(LocalDateTime.now().plusDays(1))
-                .end(LocalDateTime.now().plusDays(2))
+                .start(LocalDateTime.now().plusDays(1).withNano(0))
+                .end(LocalDateTime.now().plusDays(2).withNano(0))
                 .build();
         Booking nextBooking2 = booking2.toBuilder()
-                .start(LocalDateTime.now().plusDays(2))
-                .end(LocalDateTime.now().plusDays(3))
+                .start(LocalDateTime.now().plusDays(2).withNano(0))
+                .end(LocalDateTime.now().plusDays(3).withNano(0))
                 .build();
         when(userRepository.findById(user2.getId()))
                 .thenReturn(Optional.of(user2));
@@ -357,12 +357,12 @@ class ItemServiceImplTest extends EntitiesForItemTests {
     @Test
     void shouldItemWithOnlyLastBookingWhenUseGetAllUserItemsWithTwoLastBookings() {
         Booking nextBooking1 = booking1.toBuilder()
-                .start(LocalDateTime.now().minusDays(2))
-                .end(LocalDateTime.now().minusDays(1))
+                .start(LocalDateTime.now().minusDays(2).withNano(0))
+                .end(LocalDateTime.now().minusDays(1).withNano(0))
                 .build();
         Booking nextBooking2 = booking2.toBuilder()
-                .start(LocalDateTime.now().minusDays(3))
-                .end(LocalDateTime.now().minusDays(2))
+                .start(LocalDateTime.now().minusDays(3).withNano(0))
+                .end(LocalDateTime.now().minusDays(2).withNano(0))
                 .build();
         when(userRepository.findById(user2.getId()))
                 .thenReturn(Optional.of(user2));

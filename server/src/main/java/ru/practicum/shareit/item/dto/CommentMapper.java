@@ -4,8 +4,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,15 +21,13 @@ public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {
 
-        ZoneId zoneId = ZoneId.of("UTC+3");
-        ZonedDateTime zonedStartDate = comment.getCreated().atZone(zoneId);
 
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
                 .authorName(comment.getAuthor().getName())
                 .itemId(comment.getItem().getId())
-                .created(zonedStartDate.toLocalDateTime())
+                .created(comment.getCreated())
                 .build();
     }
 

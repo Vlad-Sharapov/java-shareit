@@ -21,7 +21,7 @@ public class EntitiesForItemTests {
             .id(1L)
             .description("Учебник китайского")
             .requestor(users.get(0))
-            .created(LocalDateTime.now())
+            .created(LocalDateTime.now().withNano(0))
             .build();
 
     protected List<Item> items = List.of(Item.builder()
@@ -44,16 +44,16 @@ public class EntitiesForItemTests {
                     .id(1L)
                     .item(items.get(0))
                     .booker(users.get(0))
-                    .start(LocalDateTime.now().plusDays(1))
-                    .end(LocalDateTime.now().plusDays(2))
+                    .start(LocalDateTime.now().plusDays(1).withNano(0))
+                    .end(LocalDateTime.now().plusDays(2).withNano(0))
                     .status(WAITING)
                     .build(),
             Booking.builder()
                     .id(2L)
                     .item(items.get(0))
                     .booker(users.get(0))
-                    .start(LocalDateTime.now().minusDays(3))
-                    .end(LocalDateTime.now().minusDays(2))
+                    .start(LocalDateTime.now().minusDays(3).withNano(0))
+                    .end(LocalDateTime.now().minusDays(2).withNano(0))
                     .status(WAITING)
                     .build());
 

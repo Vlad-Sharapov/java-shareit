@@ -81,8 +81,8 @@ class BookingServiceImplIntegrationTest extends EntitiesForBookingTests {
                         .booker(users.get(1))
                         .item(items.get(0))
                         .status(BookingStatus.REJECTED)
-                        .start(LocalDateTime.now().minusDays(1))
-                        .end(LocalDateTime.now().plusDays(1))
+                        .start(LocalDateTime.now().minusDays(1).withNano(0))
+                        .end(LocalDateTime.now().plusDays(1).withNano(0))
                         .build()
         );
 

@@ -316,8 +316,8 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
     @Test
     void getAllUserBookingsWithStatusCurrent() {
         List<Booking> testBookings = List.of(booking1.toBuilder()
-                .start(LocalDateTime.now().minusDays(1))
-                .end(LocalDateTime.now().plusDays(1)).build());
+                .start(LocalDateTime.now().minusDays(1).withNano(0))
+                .end(LocalDateTime.now().plusDays(1).withNano(0)).build());
 
         when(userRepository.findById(user1.getId()))
                 .thenReturn(Optional.of(user1));
@@ -477,8 +477,8 @@ class BookingServiceImplTest extends EntitiesForBookingTests {
     @Test
     void getAllOwnerBookingsWithStatusCurrent() {
         List<Booking> testBookings = List.of(booking1.toBuilder()
-                .start(LocalDateTime.now().minusDays(1))
-                .end(LocalDateTime.now().plusDays(1)).build());
+                .start(LocalDateTime.now().minusDays(1).withNano(0))
+                .end(LocalDateTime.now().plusDays(1).withNano(0)).build());
 
         when(userRepository.findById(user1.getId()))
                 .thenReturn(Optional.of(user1));

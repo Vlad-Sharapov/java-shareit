@@ -20,7 +20,7 @@ public class EntitiesForBookingTests {
             .id(1L)
             .description("Учебник китайского")
             .requestor(users.get(0))
-            .created(LocalDateTime.now())
+            .created(LocalDateTime.now().withNano(0))
             .build();
 
     protected List<Item> items = List.of(Item.builder()

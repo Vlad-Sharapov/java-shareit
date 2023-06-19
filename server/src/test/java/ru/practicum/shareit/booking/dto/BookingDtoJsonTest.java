@@ -58,8 +58,8 @@ class BookingDtoJsonTest {
                         .ownerId(1L)
                         .build())
                 .status(BookingStatus.WAITING)
-                .start(LocalDateTime.now().withNano(0).plusDays(1))
-                .end(LocalDateTime.now().withNano(0).plusDays(2))
+                .start(LocalDateTime.now().withNano(0).plusDays(1).withNano(0))
+                .end(LocalDateTime.now().withNano(0).plusDays(2).withNano(0))
                 .build());
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
