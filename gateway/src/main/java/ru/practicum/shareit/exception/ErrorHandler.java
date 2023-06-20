@@ -14,21 +14,10 @@ import javax.validation.ConstraintViolationException;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class})
+    @ExceptionHandler({ConstraintViolationException.class, MethodArgumentNotValidException.class,
+            MissingRequestHeaderException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response handleArgumentNotValidException(final Exception e) {
-        return new Response(false, e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response handleMissingRequestHeaderException(final MissingRequestHeaderException e) {
-        return new Response(false, e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Response handleIllegalArgumentException(final IllegalArgumentException e) {
         return new Response(false, e.getMessage());
     }
 }
